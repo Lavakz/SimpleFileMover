@@ -131,7 +131,7 @@ def main():
 
 
 if __name__ == "__main__":
-    print("\nWelcome!")
+    print("\nSimple File Viewer")
     get_dirs()
     get_info()
     main()
