@@ -1,4 +1,7 @@
 rated:
-
+./a
+./b
+./c
 
 unrated:
+./unorganized

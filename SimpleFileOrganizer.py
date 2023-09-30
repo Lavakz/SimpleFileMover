@@ -1,17 +1,23 @@
-import sys
 import os
+import subprocess
 import random
 import shutil
+import sys
 
 dir_filename = "dirs.txt"
 files = {}
 fav_dirs = []
 batch_move = False
 
+windows = False
+image_viewer = "feh"
+
+
 class Random_File:
     def __init__(self, dir=""):
-        self.dir: str = random.choice(
-            list(files.keys())) if dir == "" else fav_dirs[dir]
+        self.dir: str = (
+            random.choice(list(files.keys())) if dir == "" else fav_dirs[dir]
+        )
         self.file: str = random.choice(os.listdir(self.dir))
         self.path: str = f"{self.dir}/{self.file}"
 
@@ -26,20 +32,23 @@ class Random_File:
         self.open()
         feedback: str = input(f"Rating (1-{len(fav_dirs)}): ")
         rating: int = int(-1 if feedback == "" or not feedback.isdigit() else feedback)
-        if 0 < rating and rating < len(fav_dirs)-1:
-            new_path: str = fav_dirs[rating-1]
+        if 0 < rating and rating < len(fav_dirs) - 1:
+            new_path: str = fav_dirs[rating - 1]
         else:
             new_path: str = "no rating"
 
         if batch_move:
-            Random_File().rate(i+1, count)
+            Random_File().rate(i + 1, count)
             self.move(new_path)
         else:
             self.move(new_path)
-            Random_File().rate(i+1, count)
+            Random_File().rate(i + 1, count)
 
     def open(self):
-        os.startfile(self.path)
+        if windows:
+            os.startfile(self.path)
+        else:
+            subprocess.call([image_viewer, self.path])
         print(f"Opened {self.file} in\n{self.dir}\n")
         return
 
@@ -53,14 +62,15 @@ class Random_File:
 
 def get_files(dir, overwrite=False):
     if len(files[dir]) == 0 or overwrite:  # scan dir if not already scanned
-        files[dir] = [file for file in os.listdir(dir)
-                      if file.endswith((".mp4", ".mkv", ".webm"))]
+        files[dir] = [
+            file for file in os.listdir(dir) if file.endswith((".mp4", ".mkv", ".webm"))
+        ]
     return files[dir]
 
 
 def get_input(prompt="-> "):
     selection = input(prompt)
-    if (selection.isdigit() == False):
+    if selection.isdigit() == False:
         return get_input("Not a valid selection\n-> ")
     return int(selection)
 
@@ -78,14 +88,16 @@ def get_info():
 
 def get_dirs():
     with open(dir_filename, "r") as file:
-        dir_names = [line.rstrip() for line in file.readlines() if not line.startswith("#")]
-        for i in range(dir_names.index("unrated:")+1, len(dir_names)):
+        dir_names = [
+            line.rstrip() for line in file.readlines() if not line.startswith("#")
+        ]
+        for i in range(dir_names.index("unrated:") + 1, len(dir_names)):
             if dir_names[i] != "":
                 files[dir_names[i]] = []
             else:
                 break
-        for i in range(dir_names.index("rated:")+1, len(dir_names)):
-            if dir_names[i] !=  "":
+        for i in range(dir_names.index("rated:") + 1, len(dir_names)):
+            if dir_names[i] != "":
                 fav_dirs.append(dir_names[i])
             else:
                 break
@@ -95,11 +107,17 @@ def main():
     if len(files) == 0:
         print("No directory paths in this file")
         sys.exit()
-    
+
     print("\n\bMain Menu:")
-    menu = ["Rate Files", "Open Random Rated File", "Open Random Unrated File", "Get Info", "Quit"]
+    menu = [
+        "Rate Files",
+        "Open Random Rated File",
+        "Open Random Unrated File",
+        "Get Info",
+        "Quit",
+    ]
     for i, item in enumerate(menu):
-        print("%d) %s" % (i+1, item))
+        print("%d) %s" % (i + 1, item))
 
     match get_input():
         case 1:
@@ -108,7 +126,7 @@ def main():
             else:
                 count = input("\nHow many files to rate?\n-> ")
                 if count == "":
-                    count = '1'
+                    count = "1"
                 if count.isdigit() == True:
                     Random_File().rate(0, int(count if int(count) > 0 else 1))
         case 2:
@@ -131,7 +149,7 @@ def main():
 
 
 if __name__ == "__main__":
-    print("\nSimple File Viewer")
+    print("\nSimple File Organizer")
     get_dirs()
     get_info()
     main()
