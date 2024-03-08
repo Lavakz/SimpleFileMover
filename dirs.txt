@@ -1,7 +1,6 @@
 organized:
-./a
-./b
-./c
+
 
 unorganized:
-./unorganized
+
+
