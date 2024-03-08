@@ -1,7 +1,7 @@
-rated:
+organized:
 ./a
 ./b
 ./c
 
-unrated:
+unorganized:
 ./unorganized
