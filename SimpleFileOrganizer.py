@@ -92,7 +92,7 @@ def get_info():
         print(f"{i+1}) {len(get_files(file_dir))} files in {file_dir}")
     print("\nOrganized Folders:")
     for i, file_dir in enumerate(fav_dirs):
-        print(f"{i}) {len(os.listdir(file_dir))} files in {file_dir}")
+        print(f"{i+1}) {len(os.listdir(file_dir))} files in {file_dir}")
 
 
 def get_dirs():
